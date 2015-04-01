@@ -94,9 +94,8 @@
 (defn ^:export create_conn [& [schema]]
   (d/create-conn (schema->clj schema)))
 
-(defn ^:export conn_from [db]
-  (atom db 
-        :meta { :listeners  (atom {}) }))
+(defn ^:export reset_conn [conn db]
+  (reset! conn db))
 
 (defn ^:export db [conn]
   @conn)
@@ -115,6 +114,9 @@
 
 (defn ^:export resolve_tempid [tempids tempid]
   (aget tempids (str tempid)))
+
+(defn ^:export js_to_datom [d]
+  (js->Datom d))
 
 (defn ^:export datoms [db index & components]
   (->> (apply d/datoms db (keywordize index) components)
