@@ -65,7 +65,8 @@
   (d/empty-db (schema->clj schema)))
 
 (defn ^:export init_db [datoms & [schema]]
-  (d/init-db (map js->Datom datoms) schema))
+  (d/init-db (map js->Datom datoms)
+             (schema->clj schema)))
 
 (defn ^:export q [query & sources]
   (let [query   (cljs.reader/read-string query)
@@ -105,12 +106,19 @@
       (callback report))
     report))
 
+(defn ^:export reset_conn [conn db]
+  (reset! conn db)
+  (transact conn #js []))
+
 (def ^:export listen d/listen!)
 
 (def ^:export unlisten d/unlisten!)
 
 (defn ^:export resolve_tempid [tempids tempid]
   (aget tempids (str tempid)))
+
+(defn ^:export js_to_datom [d]
+  (js->Datom d))
 
 (defn ^:export datoms [db index & components]
   (->> (apply d/datoms db (keywordize index) components)
