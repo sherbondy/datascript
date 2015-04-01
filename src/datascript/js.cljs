@@ -65,7 +65,8 @@
   (d/empty-db (schema->clj schema)))
 
 (defn ^:export init_db [datoms & [schema]]
-  (d/init-db (map js->Datom datoms) schema))
+  (d/init-db (map js->Datom datoms)
+             (schema->clj schema)))
 
 (defn ^:export q [query & sources]
   (let [query   (cljs.reader/read-string query)
@@ -94,9 +95,6 @@
 (defn ^:export create_conn [& [schema]]
   (d/create-conn (schema->clj schema)))
 
-(defn ^:export reset_conn [conn db]
-  (reset! conn db))
-
 (defn ^:export db [conn]
   @conn)
 
@@ -107,6 +105,10 @@
     (doseq [[_ callback] @(:listeners (meta conn))]
       (callback report))
     report))
+
+(defn ^:export reset_conn [conn db]
+  (reset! conn db)
+  (transact conn #js []))
 
 (def ^:export listen d/listen!)
 
