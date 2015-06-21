@@ -1,4 +1,5 @@
 /target
+/bench/target
 /classes
 /checkouts
 pom.xml
@@ -7,9 +8,12 @@ pom.xml.asc
 *.class
 /.lein-*
 /.nrepl-port
+/.repl
 web/out
 web/*.js
-perf
 release-js/datascript*.js
 release-js/npm-*
 web/target-cljs
+release.clj
+.idea
+*.iml

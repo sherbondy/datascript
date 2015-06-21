@@ -65,8 +65,7 @@
   (d/empty-db (schema->clj schema)))
 
 (defn ^:export init_db [datoms & [schema]]
-  (d/init-db (map js->Datom datoms)
-             (schema->clj schema)))
+  (d/init-db (map js->Datom datoms) (schema->clj schema)))
 
 (defn ^:export q [query & sources]
   (let [query   (cljs.reader/read-string query)
@@ -132,7 +131,7 @@
   (into-array (d/index-range db attr start end)))
 
 (defn ^:export squuid []
-  (.-uuid (d/squuid)))
+  (str (d/squuid)))
 
 (defn ^:export squuid_time_millis [uuid]
-  (d/squuid-time-millis (UUID. uuid)))
+  (d/squuid-time-millis (cljs.core/uuid uuid)))

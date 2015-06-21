@@ -1,3 +1,40 @@
+# 0.11.4
+
+Experimental support for Clojure on JVM:
+
+  - `sorted-set` instead of BTSet
+  - polymorphic `get` lookup in query
+  - no sorting optimisation for `init-db`
+
+Performance numbers so far ([raw data](https://gist.github.com/tonsky/9da339f87113e1f1a395)):
+
+- queries with single clause, no join: 30–50% faster 
+- queries with joins: ~50% slower
+- `transact`: ~3.5–4 times faster
+- `init-db`: ~2–2.5 times slower
+- rules: ~2–5 times faster
+- db `equiv`: ~5 times slower
+- db `hash`: ~10 times slower
+
+# 0.11.3
+
+- Fixed UUID constructor warning under CLJS 0.0-3291 and later
+
+# 0.11.2
+
+- Support reverse attribute refs in combination with wildcards (issue #80)
+- `*.cljc` sources do not conflict with Clojure now. Code compiles under `[lein-cljsbuild "1.0.6"]`
+
+# 0.11.1
+
+- Return nil from entity when passed nil eid (issue #75)
+
+# 0.11.0
+
+- Fixed `init_db` in js (issue #73)
+- Preliminary work for Clojure port (PR #70, #71)
+- [ BREAKING ] DS now requires CLJS 0.0-3196 or later
+
 # 0.10.0
 
 - New parser for query and rules
