@@ -1,12 +1,8 @@
 (ns datascript.test.btset
-  #?@(:cljs
-      [(:require-macros [cemerick.cljs.test :refer [is deftest testing]])
-       (:require [cemerick.cljs.test :as t]
-                 [datascript.btset :as btset :refer [btset btset-by slice]]
-                 [datascript.perf :as perf])]
-      :clj
-      [(:require [clojure.test :as t :refer [is deftest testing]]
-                 [datascript.btset :as btset :refer [btset btset-by slice]])]))
+  (:require
+    [datascript.btset :as btset :refer [btset btset-by slice]]
+    #?(:cljs [cljs.test    :as t :refer-macros [is are deftest testing]]
+       :clj  [clojure.test :as t :refer        [is are deftest testing]])))
 
 #?(:cljs (enable-console-print!))
 
@@ -41,6 +37,11 @@
     (is (= []                (vec (slice e1 [:c nil]))))         ; totally out of range
     ))
 
+(defn into-via-doseq [to from]
+  (let [res (transient [])]
+    (doseq [x from]  ;; checking chunked iter
+      (conj! res x))
+    (persistent! res)))
 
 (deftest stresstest-btset
   (let [iters 5]
@@ -48,13 +49,15 @@
       (let [xs        (vec (repeatedly (rand-int 10000) #(rand-int 10000)))
             xs-sorted (distinct (sort xs))
             rm        (repeatedly (rand-int 50000) #(rand-nth xs))
+            full-rm   (shuffle (concat xs rm))
             xs-rm     (reduce disj (into (sorted-set) xs) rm)]
         #_(println "Checking btset" (str (inc i)  "/" iters ":")
                  (count xs) "adds" (str "(" (count xs-sorted) " distinct),")
                  (count rm) "removals" (str "(down to " (count xs-rm) ")"))
         (doseq [[method set0] [["conj" (into (btset) xs)]
                                ["bulk" (apply btset xs)]]
-                :let [set1 (reduce disj set0 rm)]]
+                :let [set1 (reduce disj set0 rm)
+                      set2 (reduce disj set0 full-rm)]]
           (testing method
             (testing "conj, seq"
               (is (= (vec set0) xs-sorted)))
@@ -62,13 +65,17 @@
               (is (= set0 (set xs-sorted))))
             (testing "count"
               (is (= (count set0) (count xs-sorted))))
+            (testing "doseq"
+              (is (= (into-via-doseq [] set0) xs-sorted)))
             (testing rm
               (testing "disj"
                 (is (= (vec set1) (vec xs-rm)))
                 (is (= (count set1) (count xs-rm)))
-                (is (= set1 xs-rm)))))
+                (is (= set1 xs-rm))
+                (is (= set2 #{})))))
           ))))
     #_(println "[ OK ] btset checked"))
+
 
 (deftest stresstest-slice
   (let [iters 5]
@@ -85,11 +92,11 @@
           (testing (str "from " from " to " to)
             (is (= (vec set-range) (vec (seq set-range)))) ;; checking IReduce on BTSetIter
             (is (= (vec set-range) expected))
-            (is (= (vec (reverse set-range)) (reverse expected)))
-            (is (= (vec (reverse (reverse set-range))) expected))
+            (is (= (into-via-doseq [] set-range) expected))
+            (is (= (vec (rseq set-range)) (reverse expected)))
+            (is (= (vec (rseq (rseq set-range))) expected))
             )))))
-;;   (println "[ OK ] btset slice checked")
-  )
+  #_(println "[ OK ] btset slice checked"))
 
 
 ;; (t/test-ns 'datascript.test.btset)

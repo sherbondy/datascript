@@ -1,11 +1,11 @@
-(defproject datascript "0.11.4"
+(defproject datascript "0.11.5"
   :description "An implementation of Datomic in-memory database and Datalog query engine in ClojureScript"
   :license {:name "Eclipse"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :url "https://github.com/tonsky/datascript"
   
   :dependencies [
-    [org.clojure/clojure "1.7.0-RC1" :scope "provided"]
+    [org.clojure/clojure "1.7.0-RC2" :scope "provided"]
     [org.clojure/clojurescript "0.0-3308" :scope "provided"]
   ]
   
@@ -16,7 +16,8 @@
   
   :jvm-opts ["-Xmx2g" "-server"]
 
-  :aliases {"test-clj" ["run" "-m" "datascript.test/test-all"]}
+  :aliases {"test-clj"     ["run" "-m" "datascript.test/test-most"]
+            "test-clj-all" ["run" "-m" "datascript.test/test-all"]}
   
   :cljsbuild { 
     :builds [
@@ -39,7 +40,6 @@
       :source-paths ["bench/src" "test"]
       :plugins [
         [lein-cljsbuild "1.0.6"]
-        [com.cemerick/clojurescript.test "0.3.3"]
       ]
       :cljsbuild { 
         :builds [
@@ -67,10 +67,6 @@
               :recompile-dependents false
             }}
         ]
-        :test-commands {
-          "datascript.test"    [ "phantomjs" :runner "target/datascript.js" ]
-          "datascript.test.js" [ "phantomjs" "test/js/runner.js" ]
-        }
       }
     }
   }

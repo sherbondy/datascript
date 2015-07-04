@@ -1,4 +1,4 @@
-# DataScript
+<img src="https://dl.dropboxusercontent.com/u/561580/imgs/datascript_logo.svg">
 
 > What if creating a database would be as cheap as creating a Hashmap?
 
@@ -48,7 +48,7 @@ For more examples, see [our acceptance test suite](test/datascript/test/).
 :dependencies [
   [org.clojure/clojure "1.7.0-beta2"]
   [org.clojure/clojurescript "0.0-3291"]
-  [datascript "0.11.4"]
+  [datascript "0.11.5"]
 ]
 ```
 
@@ -125,21 +125,23 @@ _Note:_ DataScript 0.11.0 and later will only work with CLJS 0.0-3196 and later
 
 DataScript can be used from any JS engine without additional dependencies:
 
-```
-<script src="https://github.com/tonsky/datascript/releases/download/0.11.4/datascript-0.11.4.min.js"></script>
+```html
+<script src="https://github.com/tonsky/datascript/releases/download/0.11.5/datascript-0.11.5.min.js"></script>
 ```
 
 or as a CommonJS module ([npm page](https://www.npmjs.org/package/datascript)):
 
 ```
 npm install datascript
+```
 
+```js
 var ds = require('datascript');
 ```
 
 or as a RequireJS module:
 
-```
+```js
 require(['datascript'], function(ds) { ... });
 ```
 
